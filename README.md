@@ -1,3 +1,7 @@
+# new-ossino-home
+
+Ossino Home Frontend - Vite + React + Tailwind project
+
 # Ossino Home Page - Minimal Implementation
 
 This is a minimal, clean implementation of the Ossino HomePage featuring only the essential components and dependencies needed for the home page functionality.
