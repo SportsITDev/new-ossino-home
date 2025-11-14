@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'corsa-grotesk';
+  src:
+    url('/src/assets/fonts/corsa-grotesk-regular.woff2') format('woff2'),
+    url('/src/assets/fonts/corsa-grotesk-regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'corsa-grotesk';
+  src:
+    url('/src/assets/fonts/corsa-grotesk-medium.woff2') format('woff2'),
+    url('/src/assets/fonts/corsa-grotesk-medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'corsa-grotesk';
+  src:
+    url('/src/assets/fonts/corsa-grotesk-bold.woff2') format('woff2'),
+    url('/src/assets/fonts/corsa-grotesk-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'corsa-grotesk';
+  src:
+    url('/src/assets/fonts/corsa-grotesk-black.woff2') format('woff2'),
+    url('/src/assets/fonts/corsa-grotesk-black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --neon-1: 74 100% 53.1%;
+  --neon-2: 73.7 100% 69.2%;
+  --neon-3: 73.8 100% 89.2%;
+
+  --green-1: 108.8 79.5% 54.7%;
+  --green-2: 96.8 88.8% 53.3%;
+  --green-3: 101.5 100% 87.1%;
+
+  --status-info: 209.7 100% 50.2%;
+  --status-success: 153.4 95.2% 44.9%;
+  --status-warning: 42.4 100% 64.3%;
+  --status-error-200: 0 90.7% 62.2%;
+  --status-error-100: 0 89.6% 65.9%;
+
+  --pink: 281.8 100% 53.7%;
+  --vh: 100%;
+
+  background-color: #000000;
+}
+
+* {
+  @apply font-corsa-grotesk tracking-normal text-white;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+#root {
+  margin: auto;
+  text-align: start;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.pop-up-border {
+  border: 1px solid;
+  border-image-source: linear-gradient(
+    150.56deg,
+    rgba(255, 255, 255, 0.2) -2.17%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.filter-invert-greyscale {
+  filter: invert(99%) sepia(3%) saturate(321%) hue-rotate(331deg)
+    brightness(116%) contrast(87%);
+}
+
+.swiper-slide {
+  width: auto;
+  height: auto;
+  flex-shrink: 0;
+}
+
+body {
+  overflow: auto;
+  background-color: #000000;
+}
+
+.scrollbar {
+  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .side-bar-scroll {
+    height: calc(var(--vh, 1vh) * 100);
+  }
+}
+
+@media (min-width: 767px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #454545;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+}
