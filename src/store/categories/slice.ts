@@ -1,50 +1,55 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { categoriesApi, type Category } from '../../api/categories/categories.api';
+import { createSlice } from '@reduxjs/toolkit';
+import { ContentApi } from 'api/content/content.api';
+import { type MenuItem } from 'components/shared/MenuItem/menuItems';
+import { createAppAsyncThunk } from 'store/helpers/createAppAsyncThunk';
+import { handleError } from 'store/helpers/handleError';
+import type { ErrorState } from 'store/types/Error';
+import { handleResponse } from './helpers';
 
-interface CategoriesState {
-    data: Category[];
-    loading: boolean;
-    error: string | null;
-}
-
-const initialState: CategoriesState = {
-    data: [],
-    loading: false,
-    error: null,
-};
-
-export const getCategories = createAsyncThunk(
-    'categories/getCategories',
-    async () => {
-        try {
-            const categories = await categoriesApi.fetchCategories();
-            return categories;
-        } catch (error) {
-            console.error('Failed to fetch categories:', error);
-            throw error;
-        }
+export const getCategories = createAppAsyncThunk(
+  'categories/getCategories',
+  async (selectedGameType: string | undefined, { rejectWithValue }) => {
+    try {
+      const response = await ContentApi.getGames();
+      const result = handleResponse(response, selectedGameType);
+      return result;
+    } catch (error) {
+      const errorState = handleError(error);
+      return rejectWithValue(errorState);
     }
+  },
 );
 
+type CategoriesState = {
+  data: MenuItem[] | null;
+  loading: boolean;
+  error: ErrorState | null;
+};
+
+const initialState: CategoriesState = {
+  data: null,
+  loading: false,
+  error: null,
+};
+
 const categoriesSlice = createSlice({
-    name: 'categories',
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(getCategories.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(getCategories.fulfilled, (state, action) => {
-                state.loading = false;
-                state.data = action.payload;
-            })
-            .addCase(getCategories.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || 'Failed to fetch categories';
-            });
-    },
+  name: 'categories',
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(getCategories.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getCategories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(getCategories.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as ErrorState;
+      });
+  },
 });
 
 export default categoriesSlice.reducer;

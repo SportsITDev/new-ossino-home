@@ -1,15 +1,8 @@
-.footer-container {
-  background: #1a1a1a;
+.footer-container li,
+.footer-container p {
+  @apply text-gray-400;
 }
 
-.footer-description {
-  line-height: 1.4;
-}
-
-.footer-description p {
-  margin-bottom: 0.5rem;
-}
-
-.white-p {
-  color: white;
+.footer-container .white-p {
+  @apply text-white;
 }

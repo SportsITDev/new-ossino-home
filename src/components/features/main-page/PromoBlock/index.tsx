@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import Slider from '../../../shared/Slider';
-import PromotionCard from '../../../shared/PromotionCard';
-import { useAppSelector, useAppDispatch } from '../../../../store';
-import { getPromotions } from '../../../../store/promotions/slice';
+import './promoblock.css';
+
+import Slider from 'components/shared/Slider';
+import { useBreakpoint, BREAKPOINTS } from 'helpers/hooks';
+import PromotionCard from 'components/shared/PromotionCard';
+import { AppDispatch, RootState } from 'store/index';
+import { getPromotions } from 'store/promotions/slice';
 
 const PromotionSkeleton = () => {
   return (
@@ -35,10 +39,14 @@ const PromotionSkeleton = () => {
 };
 
 const PromoBlock = () => {
-  const dispatch = useAppDispatch();
-  const promotions = useAppSelector((state) => state.promotions.data);
-  const loading = useAppSelector((state) => state.promotions.loading);
-  const error = useAppSelector((state) => state.promotions.error);
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    data: promotions,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.promotions);
+  const { screenWidth } = useBreakpoint();
+  const xl = screenWidth >= BREAKPOINTS.xl;
 
   useEffect(() => {
     dispatch(getPromotions());
@@ -51,7 +59,7 @@ const PromoBlock = () => {
           {Array.from({ length: 4 }, (_, index) => (
             <SwiperSlide
               key={`skeleton-${index}`}
-              style={{ width: '375px' }}
+              style={{ width: xl ? '375px' : 'auto' }}
             >
               <PromotionSkeleton />
             </SwiperSlide>
@@ -65,7 +73,7 @@ const PromoBlock = () => {
     return (
       <div className="py-[9px]">
         <div className="text-red-400">
-          Error loading promotions: {error}
+          Error loading promotions: {error.message}
         </div>
       </div>
     );
@@ -84,19 +92,16 @@ const PromoBlock = () => {
     .sort((a, b) => a.displayorder - b.displayorder);
 
   return (
-    <div className="py-[9px]">
-      <h2 className="text-xl font-bold text-white mb-4">Promotions</h2>
-      <Slider withShadow>
-        {activePromotions.map((promotion) => (
-          <SwiperSlide
-            key={promotion.offer_id}
-            style={{ width: '375px' }}
-          >
-            <PromotionCard promotion={promotion} />
-          </SwiperSlide>
-        ))}
-      </Slider>
-    </div>
+    <Slider withShadow>
+      {activePromotions.map((promotion) => (
+        <SwiperSlide
+          key={promotion.offer_id}
+          style={{ width: xl ? '375px' : 'auto' }}
+        >
+          <PromotionCard promotion={promotion} />
+        </SwiperSlide>
+      ))}
+    </Slider>
   );
 };
 

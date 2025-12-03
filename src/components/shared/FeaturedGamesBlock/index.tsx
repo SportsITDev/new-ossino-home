@@ -1,5 +1,5 @@
-import Slider from '../Slider';
-import { cn } from '../../../helpers/ui';
+import Slider from 'components/shared/Slider';
+import { cn } from 'helpers/ui';
 import 'swiper/css';
 import { SwiperSlide } from 'swiper/react';
 import GameRoundedIcon, {
@@ -16,10 +16,11 @@ interface IRecentlyPlayedBlockProps {
 const FeaturedGamesBlock = ({
   games,
   label,
+  headerClassName,
   className,
 }: IRecentlyPlayedBlockProps) => {
   return (
-    <Slider label={label} navigation>
+    <Slider label={label} navigation headerClassName={headerClassName}>
       {games.map((game) => (
         <SwiperSlide
           key={(Math.random() * 100 + 1).toString()}

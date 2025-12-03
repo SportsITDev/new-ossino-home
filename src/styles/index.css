@@ -1,3 +1,4 @@
+@import './theme.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,28 +44,13 @@
 }
 
 :root {
-  --neon-1: 74 100% 53.1%;
-  --neon-2: 73.7 100% 69.2%;
-  --neon-3: 73.8 100% 89.2%;
-
-  --green-1: 108.8 79.5% 54.7%;
-  --green-2: 96.8 88.8% 53.3%;
-  --green-3: 101.5 100% 87.1%;
-
-  --status-info: 209.7 100% 50.2%;
-  --status-success: 153.4 95.2% 44.9%;
-  --status-warning: 42.4 100% 64.3%;
-  --status-error-200: 0 90.7% 62.2%;
-  --status-error-100: 0 89.6% 65.9%;
-
-  --pink: 281.8 100% 53.7%;
   --vh: 100%;
-
-  background-color: #000000;
+  background-color: var(--bg-primary);
 }
 
 * {
-  @apply font-corsa-grotesk tracking-normal text-white;
+  @apply font-corsa-grotesk tracking-normal;
+  color: var(--text-primary);
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -79,8 +65,8 @@
 #root {
   margin: auto;
   text-align: start;
-  width: 100%;
-  min-height: 100vh;
+  overflow: hidden;
+  padding-left: calc((100vw - 1440px) / 2);
 }
 
 .pop-up-border {
@@ -105,7 +91,6 @@
 
 body {
   overflow: auto;
-  background-color: #000000;
 }
 
 .scrollbar {
@@ -121,15 +106,6 @@ body {
   }
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
 @media (max-width: 767px) {
   .side-bar-scroll {
     height: calc(var(--vh, 1vh) * 100);
@@ -137,16 +113,76 @@ body {
 }
 
 @media (min-width: 767px) {
+  body {
+    overflow: hidden;
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: #454545;
-    border-radius: 10px;
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px; /* Заокруглені грані */
   }
 
   ::-webkit-scrollbar-track {
-    background: #1a1a1a;
+    background: var(--scrollbar-track);
   }
+
+  /* Custom scrollbar for VIP game selection */
+  .vip-games-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .vip-games-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-vip);
+    border-radius: 6px;
+    border: 1px solid #374151;
+  }
+
+  .vip-games-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  .vip-games-scroll::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-vip);
+    border-radius: 6px;
+  }
+}
+
+input[type='range']::-webkit-slider-thumb {
+  @apply w-[2px] h-[2px] bg-green-500 rounded-full cursor-pointer;
+}
+
+input[type='range']::-moz-range-thumb {
+  @apply w-[2px] h-[2px] bg-green-500 rounded-full cursor-pointer;
+}
+
+.markdown h2 {
+  @apply text-xl font-bold leading-none text-white;
+}
+
+.markdown h3 {
+  @apply font-bold leading-4;
+}
+
+.markdown p {
+  @apply text-sm leading-5 text-gray-200 mb-2;
+}
+
+.markdown ul {
+  @apply list-disc ml-2.5 pl-3;
+}
+
+.markdown ul li::marker {
+  @apply text-[10px]
+}
+
+.markdown ul p {
+  @apply mb-0;
+}
+
+::-webkit-calendar-picker-indicator {
+  display: none;
 }

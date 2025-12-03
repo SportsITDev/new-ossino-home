@@ -1,47 +1,129 @@
-import { type ReactNode } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, A11y } from 'swiper/modules';
+import { useEffect, useState, type ReactNode } from 'react';
+import SwiperCore from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { cn } from '../../../helpers/ui';
+import { A11y, Controller, Navigation, Pagination } from 'swiper/modules';
+import { Swiper } from 'swiper/react';
+import type { PaginationOptions, Swiper as SwiperType } from 'swiper/types';
+
+import SwiperHeader from 'components/shared/Slider/Header';
+import { BREAKPOINTS, useBreakpoint } from 'helpers/hooks';
+import { cn } from 'helpers/ui';
+import styles from './slider.module.css';
+
+SwiperCore.use([Controller, Navigation, Pagination, A11y]);
 
 interface ISliderProps {
   children: ReactNode;
   label?: string;
+  count?: number;
+  showMore?: boolean;
   withShadow?: boolean;
   navigation?: boolean;
   className?: string;
+  classNameSwiper?: string;
+  headerClassName?: string;
+  loop?: boolean;
+  controller?: SwiperType | null;
+  to?: string;
+  slidesPerView?: number;
   spaceBetween?: number;
-  slidesPerView?: number | 'auto';
+  slidesOffsetAfter?: number;
+  slidesPerGroup?: number;
+  pagination?: boolean | PaginationOptions;
+  grabCursor?: boolean;
+  direction?: 'horizontal' | 'vertical';
+  showMoreComponent?: 'link' | 'button';
+  onClick?: () => void;
+  onSwiper?: (swiper: SwiperType) => void;
 }
 
 const Slider = ({
   children,
+  count,
   label,
-  withShadow = false,
-  navigation = false,
+  showMore,
   className,
-  spaceBetween = 12,
-  slidesPerView = 'auto',
+  withShadow,
+  navigation,
+  loop,
+  controller,
+  to = '#',
+  slidesPerView,
+  spaceBetween,
+  slidesOffsetAfter,
+  slidesPerGroup,
+  pagination,
+  grabCursor,
+  direction,
+  showMoreComponent,
+  onClick,
+  onSwiper,
+  classNameSwiper,
+  headerClassName,
 }: ISliderProps) => {
+  const [swiperInstance, setSwiperInstance] = useState<SwiperCore | null>(null);
+  const { screenWidth } = useBreakpoint();
+  const xl = screenWidth >= BREAKPOINTS.xl;
+
+  useEffect(() => {
+    if (swiperInstance && controller) {
+      if (swiperInstance.controller) {
+        swiperInstance.controller.control = controller;
+      }
+    }
+  }, [swiperInstance, controller]);
+
   return (
     <div className={cn('', className)}>
       {label && (
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-white">{label}</h3>
-        </div>
+        <SwiperHeader
+          label={label}
+          count={count}
+          swiper={swiperInstance}
+          className={headerClassName}
+          showMore={showMore}
+          navigation={navigation}
+          to={to}
+          showMoreComponent={showMoreComponent}
+          onClick={onClick}
+        />
       )}
       <Swiper
         className={cn(
           'relative',
-          { 'shadow-lg': withShadow }
+          { [styles.sliderShadowBlack]: withShadow },
+          { [styles.sliderShadowGray]: withShadow && xl },
+          classNameSwiper,
         )}
         modules={[Navigation, Pagination, A11y]}
-        spaceBetween={spaceBetween}
-        slidesPerView={slidesPerView}
-        navigation={navigation}
+        spaceBetween={spaceBetween || 12}
         freeMode
+        slidesPerView={slidesPerView || 'auto'}
         touchReleaseOnEdges
+        loop={
+          !!loop &&
+          typeof count === 'number' &&
+          typeof slidesPerView === 'number' &&
+          count > slidesPerView
+        }
+        controller={{ control: controller || undefined }}
+        onSwiper={(swiper) => {
+          setSwiperInstance(swiper)
+          if (controller) {
+            // eslint-disable-next-line no-param-reassign
+            swiper.controller.control = controller;
+          }
+          if (onSwiper) {
+            onSwiper(swiper);
+          }
+        }}
+        direction={direction}
+        slidesOffsetAfter={slidesOffsetAfter}
+        slidesPerGroup={slidesPerGroup}
+        pagination={pagination}
+        grabCursor={grabCursor}
+        allowTouchMove
       >
         {children}
       </Swiper>
@@ -50,4 +132,3 @@ const Slider = ({
 };
 
 export default Slider;
-export { SwiperSlide };

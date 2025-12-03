@@ -1,0 +1,103 @@
+{
+  "_id": {
+    "$oid": "692ec63a00b40a7acd3a2b50"
+  },
+  "name": "Ossino",
+  "type": "crypto",
+  "repoUrl": "https://github.com/SportsITDev/new-ossino-home.git",
+  "description": "Modern cryptocurrency trading platform with advanced charting and portfolio management",
+  "features": [
+    {
+      "id": "trading_interface",
+      "name": "Trading Interface",
+      "description": "Advanced trading interface with real-time charts, order book, and trade history",
+      "files": [
+        "src/components/Trading/TradingChart.tsx",
+        "src/components/Trading/OrderBook.tsx",
+        "src/components/Trading/TradeHistory.tsx",
+        "src/pages/Trading.tsx"
+      ],
+      "dependencies": ["websocket", "charting_library"]
+    },
+    {
+      "id": "wallet_management",
+      "name": "Wallet Management",
+      "description": "Secure wallet integration with multi-currency support and transaction history",
+      "files": [
+        "src/components/Wallet/WalletOverview.tsx",
+        "src/components/Wallet/TransactionHistory.tsx",
+        "src/components/Wallet/DepositWithdraw.tsx"
+      ],
+      "dependencies": ["crypto_apis"]
+    },
+    {
+      "id": "portfolio_tracker",
+      "name": "Portfolio Tracker",
+      "description": "Real-time portfolio tracking with profit/loss calculations and performance analytics",
+      "files": [
+        "src/components/Portfolio/PortfolioOverview.tsx",
+        "src/components/Portfolio/AssetAllocation.tsx",
+        "src/components/Portfolio/PerformanceChart.tsx"
+      ],
+      "dependencies": ["charting_library"]
+    },
+    {
+      "id": "market_data",
+      "name": "Market Data",
+      "description": "Live market data feeds, price alerts, and market analysis tools",
+      "files": [
+        "src/components/Market/MarketOverview.tsx",
+        "src/components/Market/PriceAlerts.tsx",
+        "src/components/Market/MarketAnalysis.tsx"
+      ],
+      "dependencies": ["websocket", "market_data_api"]
+    },
+    {
+      "id": "user_management",
+      "name": "User Management",
+      "description": "User authentication, KYC verification, and profile management",
+      "files": [
+        "src/components/Auth/Login.tsx",
+        "src/components/Auth/Register.tsx",
+        "src/components/Profile/UserProfile.tsx",
+        "src/components/Profile/KYCVerification.tsx"
+      ],
+      "dependencies": ["auth_service"]
+    }
+  ],
+  "fileStructure": {
+    "components": [
+      "Trading/TradingChart.tsx",
+      "Trading/OrderBook.tsx",
+      "Trading/TradeHistory.tsx",
+      "Wallet/WalletOverview.tsx",
+      "Wallet/TransactionHistory.tsx",
+      "Portfolio/PortfolioOverview.tsx",
+      "Market/MarketOverview.tsx",
+      "Auth/Login.tsx",
+      "Layout/Header.tsx",
+      "Layout/Sidebar.tsx"
+    ],
+    "pages": [
+      "Trading.tsx",
+      "Wallet.tsx",
+      "Portfolio.tsx",
+      "Market.tsx",
+      "Profile.tsx"
+    ],
+    "styles": [
+      "trading.css",
+      "wallet.css",
+      "portfolio.css",
+      "market.css",
+      "global.css"
+    ],
+    "hooks": [
+      "useWebSocket.ts",
+      "useMarketData.ts",
+      "useWallet.ts",
+      "useAuth.ts"
+    ],
+    "services": ["api.ts", "websocket.ts", "auth.ts", "trading.ts"]
+  }
+}

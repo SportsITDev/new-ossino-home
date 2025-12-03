@@ -1,134 +1,181 @@
+import ErrorMessage from 'components/shared/ErrorMessage';
+import NoItemsMessage from 'components/shared/NoItemsMessage';
+import {
+  selectError,
+  selectGamesByCategories,
+  selectIsLoading,
+} from 'store/games/selectors';
+import { useAppDispatch, useAppSelector } from 'store/index';
+import { useMemo, useEffect } from 'react';
+import GamesSkeleton from '../GamesSkeleton';
+import { fetchGames } from 'store/games/slice';
+import GamesSlider from '../GamesSlider';
+import LastWinsBlock from '../LastWinsBlock';
+import NoGamesMessage from '../NoGamesMessage';
+import ProvidersBlock from '../ProvidersBlock';
+import { selectCategories, selectCategoriesLoading } from 'store/categories/selectors';
+import { getCategories } from 'store/categories/slice';
 
-import { useAppSelector } from '../../../../store';
-import { Button } from '../../../shared/ui';
-import { selectGames, selectIsLoading, selectError } from '../../../../store/games/selectors';
-import type { Game } from '../../../../api/games/games.types';
+type MainPageBlocksProps = {
+  category: string;
+};
 
-
-interface MainPageBlocksProps {
-  category?: string;
-}
-
-
-const MainPageBlocks: React.FC<MainPageBlocksProps> = ({ category = 'Lobby' }) => {
-  const games = useAppSelector(selectGames) as Game[];
-  const loading = useAppSelector(selectIsLoading);
+const MainPageBlocks = ({ category }: MainPageBlocksProps) => {
   const error = useAppSelector(selectError);
+  const isLoading = useAppSelector(selectIsLoading);
+  const gamesByCategories = useAppSelector(selectGamesByCategories);
+  const categories = useAppSelector(selectCategories);
+  const categoriesLoading = useAppSelector(selectCategoriesLoading);
+  const dispatch = useAppDispatch();
 
-  if (loading) {
-    return (
-      <div className="mb-8">
-        <div className="flex justify-center py-8">
-          <div className="text-gray-400">Loading games...</div>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (categories?.length <= 0) {
+      dispatch(getCategories());
+    }
+    if (!gamesByCategories) {
+      dispatch(fetchGames());
+    }
+  }, [dispatch, gamesByCategories, categories]);
+
+  const { filteredCategories } = useMemo(() => {
+    if (!gamesByCategories || !categories) {
+      return { filteredGames: [], filteredCategories: [] };
+    }
+
+    if (category === 'Lobby') {
+      return {
+        filteredGames: Object.values(gamesByCategories).flatMap(
+          (categoryData) => categoryData.games || [],
+        ),
+        filteredCategories: Object.keys(gamesByCategories),
+      };
+    } else {
+      const selectedCategoryObj = categories.find(
+        (cat) => cat.label === category,
+      );
+      if (!selectedCategoryObj) {
+        return { filteredGames: [], filteredCategories: [] };
+      }
+
+      const categoryData = gamesByCategories[selectedCategoryObj.id];
+      return {
+        filteredGames: categoryData?.games || [],
+        filteredCategories: categoryData ? [selectedCategoryObj.id] : [],
+      };
+    }
+  }, [category, gamesByCategories, categories]);
 
   if (error) {
+    const { message } = error;
+
     return (
-      <div className="mb-8">
-        <div className="text-red-400 text-center py-8">{error}</div>
+      <>
+        <div className="flex justify-center items-center py-[70px]">
+          <ErrorMessage message={message} />
+        </div>
+        <ProvidersBlock />
+        <LastWinsBlock />
+      </>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <>
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <ProvidersBlock />
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <LastWinsBlock />
+      </>
+    );
+  }
+
+  if (categoriesLoading || !categories) {
+    return (
+      <>
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <ProvidersBlock />
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <GamesSkeleton />
+        <LastWinsBlock />
+      </>
+    );
+  }
+
+  if (category !== 'Lobby' && category !== 'All') {
+    if (filteredCategories.length === 0) {
+      return <NoGamesMessage label={category} message="No games found" />;
+    }
+
+    const categoryId = filteredCategories[0];
+    const categoryData = gamesByCategories?.[categoryId];
+
+    if (!categoryData) {
+      return <NoGamesMessage label={category} message="No games found" />;
+    }
+
+    const { games, href } = categoryData;
+
+    return (
+      <div className="-mt-[1.334px]">
+        <GamesSlider games={games} label={category} href={href} />
       </div>
     );
   }
 
-  if (!games || games.length === 0) {
+  if (!gamesByCategories) {
     return (
-      <div className="mb-8">
-        <p className="text-gray-400 text-center py-8">No games available</p>
-      </div>
+      <>
+        <div className="flex justify-center items-center py-[70px]">
+          <NoItemsMessage message="No games found" />
+        </div>
+        <ProvidersBlock />
+        <LastWinsBlock />
+      </>
     );
   }
 
-  // If category is 'Lobby', show all categories as separate sections
-  if (category === 'Lobby') {
-    // Group games by category
-    const gamesByCategory = games.reduce((acc: { [key: string]: Game[] }, game) => {
-      const gameCategory = game.categories?.[0] || 'Other';
-      if (!acc[gameCategory]) {
-        acc[gameCategory] = [];
-      }
-      acc[gameCategory].push(game);
-      return acc;
-    }, {});
-
-    return (
-      <div className="space-y-12">
-        {Object.entries(gamesByCategory).map(([categoryName, categoryGames]) => (
-          <section key={categoryName} className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-white">{categoryName}</h2>
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {categoryGames.slice(0, 12).map((game) => (
-                <div key={game.id} className="group cursor-pointer">
-                  <div className="relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                    <img
-                      src={game.image}
-                      alt={game.title}
-                      className="w-full aspect-square object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Button variant="default" size="sm">
-                        Play Now
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <h3 className="font-medium text-sm truncate text-white">{game.title}</h3>
-                    <p className="text-xs text-gray-400">{game.provider}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
-    );
-  }
-
-  // Filter games by specific category
-  const filteredGames = games.filter((game) =>
-    game.categories && game.categories.includes(category)
-  );
+  const categoriesToShow =
+    category === 'Lobby'
+      ? Object.keys(gamesByCategories)
+      : Object.keys(gamesByCategories);
 
   return (
-    <section className="mb-8">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-white">{category} Games</h2>
-        <Button variant="outline" size="sm">
-          View All Games
-        </Button>
-      </div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {filteredGames.map((game) => (
-          <div key={game.id} className="group cursor-pointer">
-            <div className="relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-              <img
-                src={game.image}
-                alt={game.title}
-                className="w-full aspect-square object-cover"
-              />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Button variant="default" size="sm">
-                  Play Now
-                </Button>
+    <>
+      {categoriesToShow.map((key, index, { length }) => {
+        const { games, href } = gamesByCategories[key];
+        const categoryLabel =
+          categories?.find((cat) => cat.id === key)?.label || key;
+
+        if (index === Math.ceil(length / 2) - 1) {
+          return (
+            <div key={key}>
+              <GamesSlider games={games} label={categoryLabel} href={href} />
+              <div className="mt-8">
+                <ProvidersBlock />
               </div>
             </div>
-            <div className="mt-2">
-              <h3 className="font-medium text-sm truncate text-white">{game.title}</h3>
-              <p className="text-xs text-gray-400">{game.provider}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
+          );
+        }
+
+        return (
+          <GamesSlider
+            key={key}
+            games={games}
+            label={categoryLabel}
+            href={href}
+          />
+        );
+      })}
+      <LastWinsBlock />
+    </>
   );
 };
 

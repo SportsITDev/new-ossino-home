@@ -1,0 +1,275 @@
+{
+  "_id": {
+    "$oid": "692ec63a00b40a7acd3a2b50"
+  },
+  "name": "Ossino Frontend",
+  "type": "casino",
+  "repoUrl": "https://github.com/SportsITDev/new-ossino-home.git",
+  "description": "Modern online casino platform with game management, user accounts, wallet transactions, and live chat features",
+  "features": [
+    {
+      "id": "game_management",
+      "name": "Game Management",
+      "description": "Casino game catalog, search, favorites, and game launching with provider integration",
+      "files": [
+        "src/components/features/main-page/ProvidersBlock/index.tsx",
+        "src/components/features/game-detail/GameInfo/index.tsx",
+        "src/components/features/game-detail/RecommendedGames/index.tsx",
+        "src/components/pages/GameDetailsPage/index.tsx",
+        "src/components/pages/SearchPage/index.tsx"
+      ],
+      "dependencies": ["redux_toolkit", "games_api", "content_api"],
+      "modifications": [
+        {
+          "file": "src/store/games/slice.ts",
+          "description": "Add game launching state management and favorite toggling functionality",
+          "prompt": "You've copied the Game Management components. Now modify the games slice to include launching states, favorite management, and game session tracking. Add createAsyncThunk for launchGame, toggleFavorite, and getGameDetails actions."
+        },
+        {
+          "file": "src/api/games/games.api.ts",
+          "description": "Extend games API with launch game endpoint and session management",
+          "prompt": "You've copied the Game Management components. Now modify the games API to include launchGame method that handles game URL generation and session creation. Add methods for tracking game sessions and updating play statistics."
+        }
+      ]
+    },
+    {
+      "id": "user_authentication",
+      "name": "User Authentication",
+      "description": "User login, registration, password reset, email verification, and profile management",
+      "files": [
+        "src/components/features/auth/AuthDialogs/index.tsx",
+        "src/components/features/auth/ForgotPasswordDialog/index.tsx",
+        "src/components/features/auth/NewPasswordDialog/index.tsx",
+        "src/components/features/settings/EditAccountForm/index.tsx",
+        "src/components/pages/AccountPage/index.tsx"
+      ],
+      "dependencies": ["auth_service", "email_verification", "form_validation"],
+      "modifications": [
+        {
+          "file": "src/store/user/slice.ts",
+          "description": "Add user profile update and verification state management",
+          "prompt": "You've copied the Authentication components. Now modify the user slice to include profile update actions, email verification status tracking, and password change functionality. Add createAsyncThunk for updateProfile, verifyEmail, and changePassword."
+        },
+        {
+          "file": "src/api/auth/auth.api.ts",
+          "description": "Add profile management endpoints and verification methods",
+          "prompt": "You've copied the Authentication components. Now modify the auth API to include updateUserProfile, changePassword, and sendVerificationEmail methods. Ensure proper token refresh handling and session management."
+        }
+      ]
+    },
+    {
+      "id": "wallet_management",
+      "name": "Wallet Management",
+      "description": "Digital wallet with deposits, withdrawals, transaction history, and multiple currency support",
+      "files": [
+        "src/components/features/wallet/WalletBlock/index.tsx",
+        "src/components/features/transactions/TransactionsContent/index.tsx",
+        "src/components/pages/TransactionsPage/index.tsx"
+      ],
+      "dependencies": ["wallet_api", "payment_gateway", "crypto_apis"],
+      "modifications": [
+        {
+          "file": "src/store/wallet/slice.ts",
+          "description": "Add wallet balance management and transaction processing",
+          "prompt": "You've copied the Wallet Management components. Now modify the wallet slice to include balance updates, transaction processing states, and payment method management. Add createAsyncThunk for deposit, withdraw, and getTransactionHistory actions."
+        },
+        {
+          "file": "src/api/wallet/wallet.api.ts",
+          "description": "Implement payment processing and crypto wallet integration",
+          "prompt": "You've copied the Wallet Management components. Now modify the wallet API to include deposit and withdrawal methods supporting both fiat and crypto currencies. Add transaction validation and status tracking."
+        }
+      ]
+    },
+    {
+      "id": "loyalty_rewards",
+      "name": "Loyalty & Rewards",
+      "description": "VIP program, missions, badges, loyalty points, and level progression system",
+      "files": [
+        "src/components/features/rewards/Missions/index.tsx",
+        "src/components/features/badges/Badges/index.tsx",
+        "src/components/features/overview/LoyaltyPoints/index.tsx",
+        "src/components/features/overview/Vip/index.tsx",
+        "src/components/pages/MissionsPage/index.tsx",
+        "src/components/pages/BadgesPage/index.tsx"
+      ],
+      "dependencies": ["loyalty_api", "gamification_engine"],
+      "modifications": [
+        {
+          "file": "src/store/loyalty/slice.ts",
+          "description": "Add loyalty points calculation and level progression logic",
+          "prompt": "You've copied the Loyalty & Rewards components. Now modify the loyalty slice to include points calculation, level progression tracking, and mission completion states. Add createAsyncThunk for claimReward, completeMission, and updateLoyaltyLevel."
+        },
+        {
+          "file": "src/api/loyalty/loyalty.api.ts",
+          "description": "Implement loyalty points and rewards system API",
+          "prompt": "You've copied the Loyalty & Rewards components. Now modify the loyalty API to include methods for calculating loyalty points, tracking mission progress, and managing VIP benefits. Add integration with game play statistics."
+        }
+      ]
+    },
+    {
+      "id": "live_chat",
+      "name": "Live Chat",
+      "description": "Real-time chat system with user messaging, emoji support, and chat moderation",
+      "files": [
+        "src/components/features/chat/ChatBlock/index.tsx",
+        "src/components/features/chat/TipDialog/index.tsx"
+      ],
+      "dependencies": ["websocket", "chat_api", "real_time_messaging"],
+      "modifications": [
+        {
+          "file": "src/store/chat/slice.ts",
+          "description": "Add real-time message handling and chat state management",
+          "prompt": "You've copied the Live Chat components. Now modify the chat slice to include message sending, receiving, and chat room management. Add createAsyncThunk for sendMessage, joinChatRoom, and getChatHistory actions with WebSocket integration."
+        },
+        {
+          "file": "src/api/chat/chat.api.ts",
+          "description": "Implement WebSocket chat API and message persistence",
+          "prompt": "You've copied the Live Chat components. Now modify the chat API to include WebSocket connection management, message broadcasting, and chat history persistence. Add user mention and emoji support."
+        }
+      ]
+    },
+    {
+      "id": "promotions_bonuses",
+      "name": "Promotions & Bonuses",
+      "description": "Promotional campaigns, bonus management, and special offers system",
+      "files": [
+        "src/components/features/promotions/SportsPromoSlider/index.tsx",
+        "src/components/shared/BonusesSheet/index.tsx",
+        "src/components/pages/PromotionsPage/index.tsx"
+      ],
+      "dependencies": ["promotions_api", "bonus_engine"],
+      "modifications": [
+        {
+          "file": "src/store/promotions/slice.ts",
+          "description": "Add promotional campaign and bonus claim management",
+          "prompt": "You've copied the Promotions & Bonuses components. Now modify the promotions slice to include active campaign tracking, bonus eligibility checking, and claim processing. Add createAsyncThunk for claimBonus, checkEligibility, and getActivePromotions."
+        },
+        {
+          "file": "src/api/promotions/promotions.api.ts",
+          "description": "Implement bonus calculation and promotional campaign API",
+          "prompt": "You've copied the Promotions & Bonuses components. Now modify the promotions API to include bonus calculation logic, promotional campaign management, and eligibility validation. Add integration with user activity tracking."
+        }
+      ]
+    },
+    {
+      "id": "referral_system",
+      "name": "Referral System",
+      "description": "User referral program with commission tracking and affiliate management",
+      "files": [
+        "src/components/features/referral/ReferralOverview/index.tsx",
+        "src/components/features/referral/ReferralEarnings/index.tsx",
+        "src/components/features/referral/ReferralReferrals/index.tsx",
+        "src/components/pages/ReferralPage/index.tsx"
+      ],
+      "dependencies": ["referral_api", "commission_engine"],
+      "modifications": [
+        {
+          "file": "src/store/referral/slice.ts",
+          "description": "Add referral tracking and commission calculation logic",
+          "prompt": "You've copied the Referral System components. Now modify the referral slice to include referral link generation, commission tracking, and affiliate statistics. Add createAsyncThunk for generateReferralLink, trackReferral, and calculateCommissions."
+        },
+        {
+          "file": "src/api/referral/referral.api.ts",
+          "description": "Implement referral tracking and commission payout system",
+          "prompt": "You've copied the Referral System components. Now modify the referral API to include referral link validation, commission calculation, and payout processing. Add analytics for referral performance tracking."
+        }
+      ]
+    },
+    {
+      "id": "notifications_system",
+      "name": "Notifications System",
+      "description": "In-app notifications, alerts, and communication management",
+      "files": [
+        "src/components/features/notifications/NotificationsSheet/index.tsx",
+        "src/components/features/notifications/NotificationDetailsSheet/index.tsx",
+        "src/components/pages/NotificationsPage/index.tsx"
+      ],
+      "dependencies": ["notifications_api", "push_notifications"],
+      "modifications": [
+        {
+          "file": "src/store/notifications/slice.ts",
+          "description": "Add notification management and delivery system",
+          "prompt": "You've copied the Notifications System components. Now modify the notifications slice to include notification delivery, read status tracking, and preference management. Add createAsyncThunk for markAsRead, deleteNotification, and updatePreferences."
+        },
+        {
+          "file": "src/api/notifications/notifications.api.ts",
+          "description": "Implement notification delivery and preference management",
+          "prompt": "You've copied the Notifications System components. Now modify the notifications API to include notification sending, delivery tracking, and user preference management. Add support for different notification types and channels."
+        }
+      ]
+    }
+  ],
+  "fileStructure": {
+    "components": {
+      "features": [
+        "auth/AuthDialogs.tsx",
+        "auth/ForgotPasswordDialog.tsx",
+        "badges/Badges.tsx",
+        "chat/ChatBlock.tsx",
+        "coins/CoinsOverview.tsx",
+        "game-detail/GameInfo.tsx",
+        "leaderboard/Leaderboard.tsx",
+        "main-page/ProvidersBlock.tsx",
+        "missions/Missions.tsx",
+        "notifications/NotificationsSheet.tsx",
+        "overview/LoyaltyPoints.tsx",
+        "promotions/SportsPromoSlider.tsx",
+        "referral/ReferralOverview.tsx",
+        "rewards/Missions.tsx",
+        "settings/EditAccountForm.tsx",
+        "transactions/TransactionsContent.tsx",
+        "vip/VipDetails.tsx",
+        "wallet/WalletBlock.tsx"
+      ],
+      "pages": [
+        "AccountPage.tsx",
+        "BadgesPage.tsx",
+        "GameDetailsPage.tsx",
+        "HomePage.tsx",
+        "MissionsPage.tsx",
+        "NotificationsPage.tsx",
+        "OverviewPage.tsx",
+        "PromotionsPage.tsx",
+        "ReferralPage.tsx",
+        "SearchPage.tsx",
+        "TransactionsPage.tsx"
+      ],
+      "shared": [
+        "GameCard.tsx",
+        "Header.tsx",
+        "SideBar.tsx",
+        "Footer.tsx",
+        "ui/Button.tsx",
+        "ui/Input.tsx",
+        "ui/Sheet.tsx"
+      ]
+    },
+    "api": [
+      "auth/auth.api.ts",
+      "games/games.api.ts",
+      "wallet/wallet.api.ts",
+      "loyalty/loyalty.api.ts",
+      "chat/chat.api.ts",
+      "promotions/promotions.api.ts",
+      "referral/referral.api.ts",
+      "notifications/notifications.api.ts"
+    ],
+    "store": [
+      "user/slice.ts",
+      "games/slice.ts",
+      "wallet/slice.ts",
+      "loyalty/slice.ts",
+      "chat/slice.ts",
+      "promotions/slice.ts",
+      "referral/slice.ts",
+      "notifications/slice.ts"
+    ],
+    "styles": ["globals.css", "theme.css", "components.css"],
+    "hooks": ["useAuth.ts", "useWallet.ts", "useChat.ts", "useGame.ts"]
+  },
+  "integrationPrompts": {
+    "setup": "You have copied all the casino platform components. Now integrate them by ensuring proper Redux store configuration, API client setup, and component routing. Verify all dependencies are properly imported and configured.",
+    "testing": "After integration, test the following critical user flows: user registration/login, game launching, wallet deposits/withdrawals, chat functionality, and loyalty point earning. Ensure all features work seamlessly together.",
+    "customization": "Customize the theme colors in src/styles/theme.css to match your brand. Update the logo and branding elements in the Header component. Configure the API endpoints in src/config/index.ts for your backend services."
+  }
+}

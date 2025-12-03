@@ -1,71 +1,75 @@
+import { STORAGE_KEYS } from 'constants/storage';
 import axios, {
-    type InternalAxiosRequestConfig,
-    type AxiosInstance,
+  type InternalAxiosRequestConfig,
+  type AxiosInstance,
 } from 'axios';
+import { LocalStorageHelper } from 'helpers/storage';
 
 export class AxiosClient {
-    private api: AxiosInstance;
+  private api: AxiosInstance;
 
-    constructor(baseURL: string) {
-        this.api = axios.create({ baseURL });
+  constructor(baseURL: string) {
+    this.api = axios.create({ baseURL });
 
-        this.api.interceptors.request.use((config) => {
-            const accessToken = localStorage.getItem('accessToken');
+    this.api.interceptors.request.use((config) => {
+      const accessToken = LocalStorageHelper.getItem(STORAGE_KEYS.accessToken);
 
-            if (!accessToken) {
-                return config;
-            }
+      if (!accessToken) {
+        return config;
+      }
 
-            if (config.method !== 'GET') {
-                const configWithData: InternalAxiosRequestConfig = {
-                    ...config,
-                    data: { ...config.data, accessToken },
-                };
+      if (config.method !== 'GET') {
+        if (config.data instanceof FormData) {
+          return config;
+        }
 
-                return configWithData;
-            }
+        const configWithData: InternalAxiosRequestConfig = {
+          ...config,
+          data: { ...config.data, accessToken },
+        };
 
-            const configWithParams: InternalAxiosRequestConfig = {
-                ...config,
-                params: { ...config.params, accessToken },
-            };
+        return configWithData;
+      }
 
-            return configWithParams;
-        });
+      const configWithParams: InternalAxiosRequestConfig = {
+        ...config,
+        params: { ...config.params, accessToken },
+      };
 
-        this.api.interceptors.response.use(
-            (response) => {
-                const { data } = response;
-                if (
-                    data &&
-                    data.error === true &&
-                    data.result &&
-                    data.result.status === '401'
-                ) {
-                    // Handle logout without circular dependency
-                    localStorage.removeItem('accessToken');
-                    window.location.href = '/login';
-                    return Promise.reject(new Error('Unauthorized'));
-                }
-                return response;
-            },
-            (error) => Promise.reject(error)
-        );
-    }
+      return configWithParams;
+    });
 
-    protected get client() {
-        return this.api;
-    }
+    this.api.interceptors.response.use(
+      (response) => {
+        const { data } = response;
+        if (
+          data &&
+          data.error === true &&
+          data.result &&
+          data.result.status === '401'
+        ) {
+          import('../store').then(({ store }) => {
+            import('../store/user/slice').then(({ logout }) => {
+              store.dispatch(logout());
+            });
+          });
+          return Promise.reject(new Error('Unauthorized'));
+        }
+        return response;
+      },
+      (error) => Promise.reject(error)
+    );
+  }
 
-    static setAccessToken(accessToken: string) {
-        localStorage.setItem('accessToken', accessToken);
-    }
+  protected get client() {
+    return this.api;
+  }
 
-    static clearAccessToken() {
-        localStorage.removeItem('accessToken');
-    }
+  static setAccessToken(accessToken: string) {
+    LocalStorageHelper.setItem(STORAGE_KEYS.accessToken, accessToken);
+  }
+
+  static clearAccessToken() {
+    LocalStorageHelper.removeItem(STORAGE_KEYS.accessToken);
+  }
 }
-
-const axiosClient = new AxiosClient(import.meta.env.VITE_API_URL || 'http://localhost:3001');
-
-export default axiosClient;

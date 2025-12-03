@@ -1,7 +1,10 @@
-import FeaturedGamesBlock from '../../../shared/FeaturedGamesBlock';
-import { useAppDispatch, useAppSelector } from '../../../../store';
+import FeaturedGamesBlock from 'components/shared/FeaturedGamesBlock';
+import FeaturedGamesBlockSkeleton from 'components/shared/FeaturedGamesBlockSkeleton';
+import { useAppDispatch, useAppSelector } from 'store/index';
 import { useEffect, useMemo } from 'react';
-import { getRecentlyPlayedGames } from '../../../../store/recentlyPlayed/slice';
+import { getRecentlyPlayedGames } from 'store/recentlyPlayed/slice';
+import type { Game } from 'api/content/content.types';
+import type { RecentlyPlayedGame } from 'store/recentlyPlayed/types';
 import type { RoundedGameIconProps } from '../GameIcon/GameRoundedCard';
 
 const normalizeString = (str: string): string => {
@@ -9,14 +12,14 @@ const normalizeString = (str: string): string => {
 };
 
 const mapRecentlyPlayedToGames = (
-  recentlyPlayedGames: any[],
-  allGames: any[],
+  recentlyPlayedGames: RecentlyPlayedGame[],
+  allGames: Game[],
 ): RoundedGameIconProps[] => {
   return recentlyPlayedGames.map((recentGame) => {
     let matchedGame = allGames.find(
       (game) =>
-        game.id === recentGame.gameCode ||
-        game.game_code === recentGame.gameCode,
+        game.game_code === recentGame.gameCode ||
+        game.id === recentGame.gameCode,
     );
 
     if (!matchedGame) {
@@ -49,7 +52,10 @@ const mapRecentlyPlayedToGames = (
     return {
       id: recentGame.gameCode,
       title: recentGame.gameName,
-      image: matchedGame?.image || '/default-game-placeholder.png',
+      image:
+        recentGame.image ||
+        matchedGame?.image ||
+        '/default-game-placeholder.png',
       name: matchedGame?.name || matchedGame?.title || recentGame.gameName,
       game: matchedGame,
     };
@@ -62,37 +68,39 @@ const RecentlyPlayedGamesBlock = () => {
     (state) => state.recentlyPlayed.data,
   );
   const loading = useAppSelector((state) => state.recentlyPlayed.loading);
-  const allGames = useAppSelector((state) => state.games.games);
+  const user = useAppSelector((state) => state.user.data);
+  const allGames = useAppSelector((state) => state.games.data);
 
   const mappedGames = useMemo(() => {
     if (!recentlyPlayedData || !allGames) return [];
+
+    console.log('Recently played games order:');
+    recentlyPlayedData.forEach((game, index) => {
+      console.log(`${index}: ${game.gameName} - ${game.betPlacedDate}`);
+    });
+
     return mapRecentlyPlayedToGames(recentlyPlayedData, allGames);
   }, [recentlyPlayedData, allGames]);
 
   useEffect(() => {
-    dispatch(getRecentlyPlayedGames());
-  }, [dispatch]);
+    if (user?.id) {
+      dispatch(getRecentlyPlayedGames());
+    }
+  }, [dispatch, user?.id]);
+
+  if (!user?.id) {
+    return null;
+  }
 
   if (loading) {
-    return (
-      <div className="py-4">
-        <h2 className="text-xl font-bold text-white mb-4">Recently Played</h2>
-        <div className="flex justify-center py-8">
-          <div className="text-gray-400">Loading recently played games...</div>
-        </div>
-      </div>
-    );
+    return <FeaturedGamesBlockSkeleton label="Recently Played" />;
   }
 
   if (mappedGames.length === 0) {
-    return null; // Don't show if no recently played games
+    return null;
   }
 
-  return (
-    <div className="py-4">
-      <FeaturedGamesBlock games={mappedGames} label="Recently played" />
-    </div>
-  );
+  return <FeaturedGamesBlock games={mappedGames} label="Recently Played" />;
 };
 
 export default RecentlyPlayedGamesBlock;

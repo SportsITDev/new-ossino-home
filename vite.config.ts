@@ -1,21 +1,38 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { compression } from 'vite-plugin-compression2';
 
+// https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react()],
-    resolve: {
-        alias: {
-            components: resolve(__dirname, 'src/components'),
-            helpers: resolve(__dirname, 'src/helpers'),
-            store: resolve(__dirname, 'src/store'),
-            api: resolve(__dirname, 'src/api'),
-            constants: resolve(__dirname, 'src/constants'),
-            assets: resolve(__dirname, 'src/assets'),
-            styles: resolve(__dirname, 'src/styles'),
-        },
+  plugins: [
+    react(),
+    compression({
+      algorithms: ['gzip'],
+      deleteOriginalAssets: false,
+    }),
+  ],
+  resolve: {
+    alias: {
+      api: '/src/api',
+      assets: '/src/assets',
+      components: '/src/components',
+      constants: '/src/constants',
+      helpers: '/src/helpers',
+      store: '/src/store',
+      styles: '/src/styles',
+      config: '/src/config',
     },
-    server: {
-        port: 3001,
+  },
+  server: {
+    proxy: {
+      '/promotion': {
+        target: 'https://casino-stg-games-beapi.negroup-tech.net',
+        changeOrigin: true,
+        secure: false,
+      },
     },
+    //enable to test on mobile devices
+    host: '0.0.0.0',
+    port: 5173,
+  },
 });

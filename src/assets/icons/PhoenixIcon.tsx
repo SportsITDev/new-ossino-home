@@ -47,8 +47,8 @@ const PhoenixIcon = (props: SVGProps<SVGSVGElement>) => {
           y2="16.3418"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#CD4A0C" />
-          <stop offset="1" stopColor="#FFA818" />
+          <stop stopColor="var(--phoenix-color-1)" />
+          <stop offset="1" stopColor="var(--phoenix-color-2)" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_4379_8539"
@@ -58,8 +58,8 @@ const PhoenixIcon = (props: SVGProps<SVGSVGElement>) => {
           y2="22.3483"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FF8B0F" />
-          <stop offset="1" stopColor="#D20F16" />
+          <stop stopColor="var(--phoenix-color-3)" />
+          <stop offset="1" stopColor="var(--phoenix-color-4)" />
         </linearGradient>
       </defs>
     </svg>
