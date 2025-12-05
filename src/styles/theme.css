@@ -55,14 +55,14 @@
   --neon-base: #D8FF68;
 
   /* === BACKGROUND COLORS === */
-  --bg-primary: #000000;
-  --bg-secondary: #141414;
-  --bg-tertiary: #2C2C2C;
+  --bg-primary: #1A1A1A; /* Updated */
+  --bg-secondary: #2C2C2C; /* Updated */
+  --bg-tertiary: #3C3C3C; /* Updated */
 
   /* === TEXT COLORS === */
   --text-primary: #FFFFFF;
-  --text-secondary: #BFBFBF;
-  --text-tertiary: #7F7F7F;
+  --text-secondary: #E0E0E0; /* Updated */
+  --text-tertiary: #A0A0A0; /* Updated */
 
   /* === SCROLLBAR COLORS === */
   --scrollbar-thumb: #454545;
